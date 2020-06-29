@@ -4,7 +4,7 @@ const path = require('path');
 module.exports = (env = {}) => {
 
     return {
-        mode: 'development',
+        mode: env.mode,
         entry: './src/components/app/app.js',
         output: {
             path: path.resolve(__dirname, 'dist'),
