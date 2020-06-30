@@ -11,6 +11,26 @@ class Tetris {
         this.lastTime = 0;
         this.update();
         this.keyControls();
+        this.updateScore();
+    }
+    arenaSweep() {
+        let rowCounter = 1;
+        outer: for (let y = arena.matrix.length - 1; y > 0; --y) {
+            for (let x = 0; x < arena.matrix[y].length; ++x) {
+                if (arena.matrix[y][x] === 0) {
+                    continue outer;
+                }
+            }
+            const row = arena.matrix.splice(y, 1)[0].fill(0);
+            arena.matrix.unshift(row);
+            ++y;
+            player.score += rowCounter * 10;
+            rowCounter *= 2;
+        }
+    }
+    updateScore() {
+        const score = document.getElementById('score');
+        score.innerText = player.score.toString();
     }
     collide(arena, player) {
         const [m, o] = [player.matrix, player.pos];
@@ -39,6 +59,50 @@ class Tetris {
             player.pos.x -= dir;
         }
     }
+    rotatePiece(dir) {
+        const pos = player.pos.x;
+        let offset = 1;
+        this.rotate(player.matrix, dir);
+        while (this.collide(arena, player)) {
+            player.pos.x += offset;
+            offset = -(offset + (offset > 0 ? 1 : -1));
+            if (offset > player.matrix[0].length) {
+                this.rotate(player.matrix, -dir);
+                player.pos.x = pos;
+                return;
+            }
+        }
+    }
+    rotate(matrix, dir) {
+        for (let y = 0; y < matrix.length; ++y) {
+            for (let x = 0; x < y; ++x) {
+                [
+                    matrix[x][y],
+                    matrix[y][x]
+                ] = [
+                    matrix[y][x],
+                    matrix[x][y]
+                ];
+            }
+        }
+        if (dir > 0) {
+            matrix.forEach(row => row.reverse());
+        }
+        else {
+            matrix.reverse();
+        }
+    }
+    playerReset() {
+        player.matrix = tetrisPieces.getPiece();
+        player.pos.y = 0;
+        player.pos.x = (arena.matrix[0].length / 2 | 0) -
+            (player.matrix[0].length / 2 | 0);
+        if (this.collide(arena, player)) {
+            arena.matrix.forEach(row => row.fill(0));
+            player.score = 0;
+            this.updateScore();
+        }
+    }
     keyControls() {
         document.addEventListener('keydown', event => {
             if (event.keyCode === 65) {
@@ -47,12 +111,20 @@ class Tetris {
             if (event.keyCode === 68) {
                 this.movePiece(1);
             }
+            if (event.keyCode === 81) {
+                this.rotatePiece(-1);
+            }
+            if (event.keyCode === 69) {
+                this.rotatePiece(1);
+            }
             if (event.keyCode === 83) {
                 player.pos.y++;
                 if (this.collide(arena, player)) {
                     player.pos.y--;
                     this.merge(arena, player);
-                    player.pos.y = 0;
+                    this.playerReset();
+                    this.arenaSweep();
+                    this.updateScore();
                 }
                 this.dropCounter = 0;
             }
@@ -62,7 +134,7 @@ class Tetris {
         matrix.forEach((row, y) => {
             row.forEach((value, x) => {
                 if (value !== 0) {
-                    this.context.fillStyle = 'red';
+                    this.context.fillStyle = tetrisPieces.colors[value];
                     this.context.fillRect(x + offset.x, y + offset.y, 1, 1);
                 }
             });
@@ -83,7 +155,9 @@ class Tetris {
             if (this.collide(arena, player)) {
                 player.pos.y--;
                 this.merge(arena, player);
-                player.pos.y = 0;
+                this.playerReset();
+                this.arenaSweep();
+                this.updateScore();
             }
             this.dropCounter = 0;
         }
@@ -93,20 +167,63 @@ class Tetris {
 }
 class TetrisPieces {
     constructor() {
-        this.pieceT = [
-            [0, 0, 0],
-            [1, 1, 1],
-            [0, 1, 0]
+        this.colors = [
+            '',
+            '#9a00cd',
+            '#cdcd00',
+            '#cd0000',
+            '#00cd00',
+            '#00cdcd',
+            '#0000cd',
+            '#cd6600'
+        ];
+        this.pieces = [
+            [
+                [0, 0, 0],
+                [1, 1, 1],
+                [0, 1, 0]
+            ],
+            [
+                [2, 2],
+                [2, 2]
+            ],
+            [
+                [0, 3, 3],
+                [3, 3, 0],
+                [0, 0, 0]
+            ],
+            [
+                [4, 4, 0],
+                [0, 4, 4],
+                [0, 0, 0]
+            ],
+            [
+                [0, 5, 0, 0],
+                [0, 5, 0, 0],
+                [0, 5, 0, 0],
+                [0, 5, 0, 0]
+            ],
+            [
+                [0, 6, 0],
+                [0, 6, 0],
+                [0, 6, 6]
+            ],
+            [
+                [0, 7, 0],
+                [0, 7, 0],
+                [7, 7, 0]
+            ]
         ];
     }
     getPiece() {
-        return this.pieceT;
+        return this.pieces[this.pieces.length * Math.random() | 0];
     }
 }
 class Player {
     constructor() {
         this.matrix = tetrisPieces.getPiece();
-        this.pos = { x: 5, y: 5 };
+        this.pos = { x: 5, y: 0 };
+        this.score = 0;
     }
 }
 class Arena {
