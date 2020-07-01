@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class Arena {
     constructor() {
-        this.matrix = this.createMatrix(12, 20);
+        this.matrix = this.createMatrix(15, 25);
     }
     createMatrix(w, h) {
         const matrix = [];

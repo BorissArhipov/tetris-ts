@@ -11,6 +11,9 @@ class Tetris {
     constructor() {
         this.tetrisCanvas = document.getElementById('tetris');
         this.context = this.tetrisCanvas.getContext('2d');
+        this.startButton = document.getElementById('start');
+        this.gameOver = document.getElementById('game-over');
+        this.overScore = document.getElementById('over-score');
         this.context.scale(20, 20);
         this.dropCounter = 0;
         this.dropInterval = 1000;
@@ -18,6 +21,15 @@ class Tetris {
         this.update();
         this.keyControls();
         this.updateScore();
+        this.startGame();
+    }
+    startGame() {
+        this.startButton.addEventListener('click', () => {
+            this.playerReset();
+            this.startButton.disabled = true;
+            this.gameOver.style.display = "none";
+            this.overScore.style.display = "none";
+        });
     }
     arenaSweep() {
         let rowCounter = 1;
@@ -36,7 +48,7 @@ class Tetris {
     }
     updateScore() {
         const score = document.getElementById('score');
-        score.innerText = player.score.toString();
+        score.innerText = `Your score: ${player.score.toString()}`;
     }
     collide(arena, player) {
         const [m, o] = [player.matrix, player.pos];
@@ -105,8 +117,13 @@ class Tetris {
             (player.matrix[0].length / 2 | 0);
         if (this.collide(arena, player)) {
             arena.matrix.forEach(row => row.fill(0));
+            this.gameOver.style.display = "block";
+            this.overScore.style.display = "block";
+            this.overScore.innerText = `Your score: ${player.score.toString()}`;
             player.score = 0;
             this.updateScore();
+            player.matrix = [[0]];
+            this.startButton.disabled = false;
         }
     }
     keyControls() {

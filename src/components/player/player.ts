@@ -1,5 +1,3 @@
-import tetrisPieces from './../tetrisPieces/tetrisPieces';
-
 //Player class
 export class Player {
     public matrix: number[][];
@@ -7,8 +5,8 @@ export class Player {
     public score: number;
 
     public constructor() {
-        this.matrix = tetrisPieces.getPiece();
-        this.pos = {x: 5, y: 0};
+        this.matrix = [[0]];
+        this.pos = {x: 0, y: 0};
         this.score = 0;
     }
 }

@@ -3,12 +3,23 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
         <title>TypeScript Tetris</title>
     </head>
     <body>
         <div class="container">
-            <div id="score"></div>
-            <canvas class="tetris" id="tetris" width="240" height="400"></canvas>
+            <div class="score" id="score"></div>
+            <div class="canvas-con">
+                <canvas class="tetris" id="tetris" width="300" height="500"></canvas>
+                <p class="game-over" id="game-over">Game Over</p>
+                <p class="over-score" id="over-score"></p>
+            </div>
+            <button class="start" id="start">
+                START
+            </button>
+            <p class="info">
+                Use ASD + Q + E keys to control 
+            </p>
         </div>
     </body>
 </html>

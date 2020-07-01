@@ -7,6 +7,9 @@ import { Arena } from './../arena/arena';
 class Tetris {
     private tetrisCanvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
+    private startButton: HTMLButtonElement;
+    private gameOver: HTMLParagraphElement;
+    private overScore: HTMLParagraphElement;
     private lastTime: number;
     private dropCounter: number;
     private dropInterval: number;
@@ -14,6 +17,9 @@ class Tetris {
     constructor() {
         this.tetrisCanvas = document.getElementById('tetris') as HTMLCanvasElement;
         this.context = this.tetrisCanvas.getContext('2d') as CanvasRenderingContext2D;
+        this.startButton = document.getElementById('start') as HTMLButtonElement;
+        this.gameOver = document.getElementById('game-over') as HTMLParagraphElement;
+        this.overScore = document.getElementById('over-score') as HTMLParagraphElement;
 
         this.context.scale(20, 20);
 
@@ -24,6 +30,16 @@ class Tetris {
         this.update();
         this.keyControls();
         this.updateScore();
+        this.startGame();
+    }
+
+    startGame() {
+        this.startButton.addEventListener('click', () => {
+            this.playerReset();
+            this.startButton.disabled = true;
+            this.gameOver.style.display = "none";
+            this.overScore.style.display = "none";
+        });
     }
 
     arenaSweep() {
@@ -45,7 +61,7 @@ class Tetris {
 
     updateScore() {
         const score = document.getElementById('score')! as HTMLDivElement;
-        score.innerText = player.score.toString();
+        score.innerText = `Your score: ${player.score.toString()}`;
     }
 
     collide(arena: Arena, player: Player) {
@@ -119,8 +135,13 @@ class Tetris {
                        (player.matrix[0].length / 2 | 0);
         if(this.collide(arena, player)) {
             arena.matrix.forEach(row => row.fill(0));
+            this.gameOver.style.display = "block";
+            this.overScore.style.display = "block";
+            this.overScore.innerText = `Your score: ${player.score.toString()}`;
             player.score = 0;
             this.updateScore();
+            player.matrix = [[0]];
+            this.startButton.disabled = false;
         }
     }
 

@@ -3,7 +3,7 @@ export class Arena {
     public matrix: number[][];
 
     public constructor() {
-        this.matrix = this.createMatrix(12, 20);
+        this.matrix = this.createMatrix(15, 25);
     }
 
     createMatrix(w: number, h: number) {
