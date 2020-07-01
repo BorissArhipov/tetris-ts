@@ -1,6 +1,12 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 require("./app.css");
+const tetrisPieces_1 = __importDefault(require("./../tetrisPieces/tetrisPieces"));
+const player_1 = require("./../player/player");
+const arena_1 = require("./../arena/arena");
 class Tetris {
     constructor() {
         this.tetrisCanvas = document.getElementById('tetris');
@@ -93,7 +99,7 @@ class Tetris {
         }
     }
     playerReset() {
-        player.matrix = tetrisPieces.getPiece();
+        player.matrix = tetrisPieces_1.default.getPiece();
         player.pos.y = 0;
         player.pos.x = (arena.matrix[0].length / 2 | 0) -
             (player.matrix[0].length / 2 | 0);
@@ -134,7 +140,7 @@ class Tetris {
         matrix.forEach((row, y) => {
             row.forEach((value, x) => {
                 if (value !== 0) {
-                    this.context.fillStyle = tetrisPieces.colors[value];
+                    this.context.fillStyle = tetrisPieces_1.default.colors[value];
                     this.context.fillRect(x + offset.x, y + offset.y, 1, 1);
                 }
             });
@@ -165,80 +171,6 @@ class Tetris {
         window.requestAnimationFrame(this.update.bind(this));
     }
 }
-class TetrisPieces {
-    constructor() {
-        this.colors = [
-            '',
-            '#9a00cd',
-            '#cdcd00',
-            '#cd0000',
-            '#00cd00',
-            '#00cdcd',
-            '#0000cd',
-            '#cd6600'
-        ];
-        this.pieces = [
-            [
-                [0, 0, 0],
-                [1, 1, 1],
-                [0, 1, 0]
-            ],
-            [
-                [2, 2],
-                [2, 2]
-            ],
-            [
-                [0, 3, 3],
-                [3, 3, 0],
-                [0, 0, 0]
-            ],
-            [
-                [4, 4, 0],
-                [0, 4, 4],
-                [0, 0, 0]
-            ],
-            [
-                [0, 5, 0, 0],
-                [0, 5, 0, 0],
-                [0, 5, 0, 0],
-                [0, 5, 0, 0]
-            ],
-            [
-                [0, 6, 0],
-                [0, 6, 0],
-                [0, 6, 6]
-            ],
-            [
-                [0, 7, 0],
-                [0, 7, 0],
-                [7, 7, 0]
-            ]
-        ];
-    }
-    getPiece() {
-        return this.pieces[this.pieces.length * Math.random() | 0];
-    }
-}
-class Player {
-    constructor() {
-        this.matrix = tetrisPieces.getPiece();
-        this.pos = { x: 5, y: 0 };
-        this.score = 0;
-    }
-}
-class Arena {
-    constructor() {
-        this.matrix = this.createMatrix(12, 20);
-    }
-    createMatrix(w, h) {
-        const matrix = [];
-        while (h--) {
-            matrix.push(new Array(w).fill(0));
-        }
-        return matrix;
-    }
-}
-const tetrisPieces = new TetrisPieces;
-const player = new Player;
-const arena = new Arena;
+const player = new player_1.Player;
+const arena = new arena_1.Arena;
 new Tetris;
