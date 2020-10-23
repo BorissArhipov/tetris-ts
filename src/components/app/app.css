@@ -5,6 +5,10 @@
     color: #ffffff;
 }
 
+.body {
+    position: relative;
+}
+
 .container {
     width: 100%;
     display: flex;
@@ -13,6 +17,7 @@
     align-items: center;
     background-color: #141518;
     flex-direction: column;
+    position: relative;
 }
 
 .canvas-con {
@@ -57,4 +62,26 @@
 .start:disabled {
     color: #787878;
     border: 5px solid #787878;
+}
+
+.desktop-playable {
+    display: none;
+}
+
+@media screen and (max-width: 1020px) {
+    .desktop-playable {
+        position: absolute;
+        height: 100vh;
+        background: #000000;
+        width: 100%;
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    .container {
+        display: none;
+    }
 }
